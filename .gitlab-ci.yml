@@ -1,21 +1,33 @@
 stages:
   - test
+  - build
 
-test:
-  stage: test
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+
+default:
   image: docker:27
   services:
-    - docker:27-dind
-  variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: "/certs"
+    - name: docker:27-dind
+      alias: docker
   before_script:
+    - docker info
+
+build:
+  stage: build
+  script:
     - apk add --no-cache python3 py3-pip docker-compose
     - cd docker
     - docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d --build
     - cd ../tests
     - pip install -r requirements.txt --break-system-packages
+
+test:
+  stage: test
   script:
+    - cd ../tests
     - ./run_tests.py backend
   after_script:
     - cd docker
