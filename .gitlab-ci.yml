@@ -6,10 +6,11 @@ test:
   before_script:
     - cd docker
     - docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d --build
-    - cd ../tests
-    - pip install -r requirements.txt
+    - cd ..
+    - python3 -m venv tests/.venv
+    - tests/.venv/bin/pip install -r tests/requirements.txt
   script:
-    - ./run_tests.py backend
+    - tests/.venv/bin/python -m pytest tests/
   after_script:
     - cd docker
     - docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml down --volumes
