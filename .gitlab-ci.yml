@@ -10,7 +10,8 @@ test:
     - python3 -m venv tests/.venv
     - tests/.venv/bin/pip install -r tests/requirements.txt
   script:
-    - tests/.venv/bin/python -m pytest tests/
+    - cd tests
+    - .venv/bin/python ./run_tests.py
   after_script:
     - cd docker
     - docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml down --volumes
