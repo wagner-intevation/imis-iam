@@ -40,7 +40,7 @@ pip install -r requirements.txt
 cd docker
 docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml down --volumes
 docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d
-cd tests
+cd ../tests
 ./run_tests.py
 # or
 pytest
@@ -89,16 +89,10 @@ delete_institution_from_db(institution_facil_name='test_5owza6aa')
 
 ### GitLab CI Example
 
-```yaml
-test:
-  stage: test
-  image: python:3.11
-  before_script:
-    - cd tests
-    - pip install -r requirements.txt
-  script:
-    - ./run_tests.py
-```
+See `.gitlab-ci.yml`.
+
+Requires a shell executor.
+The default `docker` executor can't start docker containers.
 
 ### GitHub Actions Example
 
