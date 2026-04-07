@@ -1,0 +1,28 @@
+name: API Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start stack
+        run: |
+          cd docker
+          docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python3 -m venv tests/.venv
+          tests/.venv/bin/pip install -r tests/requirements.txt
+      - name: Run tests
+        run: |
+          cd tests
+          .venv/bin/python ./run_tests.py
+      - name: Tear down stack
+        run: |
+          cd docker
+          docker compose --env-file dev.env -f docker-compose.yml -f docker-compose.dev.yml down --volumes
